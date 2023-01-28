@@ -1,0 +1,231 @@
+---
+title: "Lab 1 Assignment"
+author: "Dhananjay"
+date: "2023-01-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q1. Install R and R-Studio
+
+Successfully installed R and R-Studio on my Windows 11 and tested the setup by generating a simple **hello world** rmd file.
+
+## Q2. Get the Data:
+
+* Inspecting **lab1.dat** in the repository
+  - Yes, the column headers is included in the file.
+  - Data columns are separated by ',' (comma)
+  - No, there is no comments in the data
+
+* Loading the data file into a data frame in R.
+
+```{r}
+dataFrame = read.table("lab1.dat", header=TRUE, sep=',', comment.char = "#")
+```
+
+```{r}
+head(dataFrame)
+```
+
+## Q3. Peruse the Data:
+
+* Print the name of the **variables** in the data table (hint: ?colnames)
+```{r}
+colnames(dataFrame)
+```
+
+* Provide a global **summary** of the data table (hint: ?summary)
+```{r}
+summary(dataFrame)
+```
+
+## Q4. Investigating the WineType variable:
+
+* List all the values of the WineType variable in the data table
+```{r}
+print(dataFrame$WineType)
+```
+
+* Compute the levels of that factor (hint: ?levels)
+```{r}
+levels(factor(dataFrame$WineType))
+```
+
+* Compute the number of records of each level (hint: ?table)
+```{r}
+table(factor(dataFrame$WineType))
+```
+
+## Q5. Investigate the ColorIntensity variable:
+
+* Compute mean of the ColorIntensity variable  (hint:  ?mean)
+```{r}
+mean(dataFrame$ColorIntensity)
+```
+  
+* Compute variance of the ColorIntensity variable  (hint: ?var)
+```{r}
+var(dataFrame$ColorIntensity)
+```
+
+* Compute standard deviation of the ColorIntensity variable
+```{r}
+sd(dataFrame$ColorIntensity)
+```
+
+* Compute 95% confidence interval of the ColorIntensity variable (hint: ?t.test)
+```{r}
+n = dim(dataFrame)[1]                 # Sample Size
+xb = mean(dataFrame$ColorIntensity)     # x_bar
+s  = sqrt(var(dataFrame$ColorIntensity)) # standard deviation
+z  = qnorm(0.975)                    # Critical value for 95%
+xb - z*s/sqrt(n)
+xb +z*s/sqrt(n)
+```
+
+```{r}
+t.test(dataFrame$ColorIntensity)$conf.int
+```
+  
+## Q6. Investigate the Hue variable for WineType Class1:
+
+* Compute variance of the Hue variable across only the records with WineType=Class1 (hint: ?subset)
+```{r}
+hue_data = subset(dataFrame, WineType=="Class1", select = c(Hue))
+print(hue_data)
+var(hue_data)
+```
+
+* Compute standard deviation of the Hue variable across only the records with WineType=Class1
+```{r}
+print(hue_data)
+hue_data_unlisted = unlist(hue_data)
+print(hue_data_unlisted)
+sd(hue_data_unlisted)
+```
+
+```{r}
+hue_data_numeric = as.numeric(unlist(hue_data))
+class(hue_data_numeric)
+print(hue_data_numeric)
+sd(hue_data_numeric)
+```
+
+* Compute 95% confidence interval of the Hue variable across only the records with WineType=Class1
+```{r}
+n = dim(dataFrame)[1]                 # Sample Size
+xb = mean(hue_data_numeric)     # x_bar
+s  = sqrt(var(hue_data_numeric)) # standard deviation
+z  = qnorm(0.975)                    # Critical value for 95%
+xb - z*s/sqrt(n)
+xb +z*s/sqrt(n)
+```
+
+```{r}
+t.test(hue_data_numeric)$conf.int
+```
+		
+## Q7. Perform simple math operations:
+
+* Subtract 120 from 536
+```{r}
+536-120
+```
+
+* Multiply 3 and 7
+```{r}
+3*7
+```
+
+* Divide 12 by 3
+```{r}
+12/3
+```
+
+* Take the base 2 logarithm of 128
+```{r}
+log(128,2)
+```
+
+* Compute nine cubed
+```{r}
+9^3
+```
+  
+## Q8. Perform math operations on data columns:
+
+* Compute the vector resulting from a pair-wise multiplication of all Hue variable values with ColorIntensity values
+```{r}
+hue_only_data = dataFrame$Hue
+print(hue_only_data)
+
+color_only_data = dataFrame$ColorIntensity
+print(color_only_data)
+
+pair_wise_mult_result = hue_only_data * color_only_data
+print(pair_wise_mult_result)
+```
+
+
+* Sum the resulting vector from the previous step (hint:  ?sum)
+```{r}
+sum(pair_wise_mult_result)
+```
+  
+## Q9. Drawing random numbers:
+
+* Draw 10 numbers from the uniform distribution, between 0.0 and 10.0 (hint:  ?runif)
+```{r}
+runif(10, min = 0.0, max = 10.0)
+```
+
+* Draw 10 numbers from the Normal distribution, mean of 1.0, standard deviation of 0.3  (hint:  ?rnorm)
+```{r}
+rnorm(10, mean = 1.0, sd = 0.3)
+```
+
+* Compute PDF result for the standard Normal distribution at the value 0.12 (hint: ?dnorm)
+```{r}
+dnorm(0.12)
+```
+
+* Compute the probability that a value drawn from the standard
+  - The question is confusing to me. I think that few parameters are missing. 
+```{r}
+qnorm(0.12)
+```
+
+* Normal distribution will be less than 1.96  (hint:  ?pnorm)
+```{r}
+value = 1.96
+pnorm(value)
+```
+  
+## Q10. Simulation:
+* Perform a Monte Carlo sampling simulation of customers arriving at a queue over the period of 10 minutes, assuming this process is governed by the Poisson distribution and that 2 customers arrive per minute on average (hint:  ?rpois)
+```{r}
+rpois(10, lambda=2)
+```
+
+* Compute the total number of people standing in line at each minute for one such simulation?  (hint: ?cumsum)
+```{r}
+total = rpois(10, lambda=2)
+cumsum(total)
+```
+
+* Enter the R code below, which defines a function.  Call that function using n=10, then again using n=10000, then again using n=10000000.  What does the function estimate?
+
+```{r}
+estimate <- function(n) {
+  return (4*sum((runif(n)^2 + runif(n)^2) < 1)/n)
+}
+estimate(10)
+estimate(10000)
+estimate(10000000)
+```
+
+The function **estimate** returns the output as per the defined equation based on the input provided by the user.
+
